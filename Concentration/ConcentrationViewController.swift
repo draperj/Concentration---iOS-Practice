@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class ConcentrationViewController: UIViewController {
     
     //does not initialize until called
     private lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
@@ -16,6 +16,16 @@ class ViewController: UIViewController {
     var numberOfPairsOfCards: Int {
         get {
             return (cardButtons.count + 1) / 2
+        }
+    }
+    
+    
+    var theme: String? {
+        didSet{
+            emojiChoicesStore  = theme ?? ""
+            emojiChoices = emojiChoicesStore
+            emoji = [:]
+            updateViewFromModel()
         }
     }
     
@@ -30,7 +40,7 @@ class ViewController: UIViewController {
     private func updateFlipCountLabel() {
         let attributes: [NSAttributedStringKey:Any] = [
             .strokeWidth : 5.0,
-            .strokeColor : #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
+            .strokeColor : #colorLiteral(red: 0.476841867, green: 0.5048075914, blue: 1, alpha: 1)
         ]
         let attributeString = NSAttributedString(string: "Flips: \(flipCount)", attributes: attributes)
         flipCountLabel.attributedText = attributeString
@@ -60,19 +70,23 @@ class ViewController: UIViewController {
     }
     
     private func updateViewFromModel(){
-        for index in cardButtons.indices {
-            let button = cardButtons[index]
-            let card = game.cards[index]
-            
-            if card.isFaceUp {
-                button.setTitle(emoji(for: card), for: UIControlState.normal)
-                button.backgroundColor=UIColor.white
-            } else {
-                button.setTitle("", for: UIControlState.normal)
-                button.backgroundColor = card.isMatched ? UIColor.clear : UIColor.orange
+        if cardButtons != nil {
+            for index in cardButtons.indices {
+                let button = cardButtons[index]
+                let card = game.cards[index]
+                
+                if card.isFaceUp {
+                    button.setTitle(test, for: UIControlState.normal)
+                    button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+                } else {
+                    button.setTitle("", for: UIControlState.normal)
+                    button.backgroundColor = card.isMatched ? #colorLiteral(red: 0, green: 0, blue: 0, alpha: 0) : #colorLiteral(red: 0.476841867, green: 0.5048075914, blue: 1, alpha: 1)
+                }
             }
         }
     }
+    
+    
     
     private lazy var emojiChoices: String = { self.emojiChoicesStore }()
     
@@ -99,4 +113,5 @@ extension Int {
         }
     }
 }
+
 
