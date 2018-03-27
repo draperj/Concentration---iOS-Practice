@@ -76,7 +76,7 @@ class ConcentrationViewController: UIViewController {
                 let card = game.cards[index]
                 
                 if card.isFaceUp {
-                    button.setTitle(test, for: UIControlState.normal)
+                    button.setTitle(emoji(for: card), for: UIControlState.normal)
                     button.backgroundColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
                 } else {
                     button.setTitle("", for: UIControlState.normal)
