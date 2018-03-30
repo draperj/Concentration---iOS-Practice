@@ -8,7 +8,11 @@
 
 import UIKit
 
-class ConcentrationViewController: UIViewController {
+class ConcentrationViewController: VCLLoggingViewController {
+    
+    override var vclLoggingName: String {
+        return "Game"
+    }
     
     //does not initialize until called
     private lazy var game = Concentration(numberOfPairsOfCards: numberOfPairsOfCards)
