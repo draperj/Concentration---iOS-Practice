@@ -46,10 +46,17 @@ class ConcentrationViewController: VCLLoggingViewController {
             .strokeWidth : 5.0,
             .strokeColor : #colorLiteral(red: 0.476841867, green: 0.5048075914, blue: 1, alpha: 1)
         ]
-        let attributeString = NSAttributedString(string: "Flips: \(flipCount)", attributes: attributes)
+        let attributeString = NSAttributedString(
+            string: traitCollection.verticalSizeClass == .compact ? "Flips - \(flipCount)" : "Flips: \(flipCount)",
+            attributes: attributes
+        )
         flipCountLabel.attributedText = attributeString
     }
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateFlipCountLabel()
+    }
     @IBOutlet private weak var flipCountLabel: UILabel! {
         didSet{
             updateFlipCountLabel()
@@ -58,9 +65,18 @@ class ConcentrationViewController: VCLLoggingViewController {
     
     @IBOutlet private var cardButtons: [UIButton]!
     
+    private var visibleCardButtons: [UIButton]! {
+        return cardButtons?.filter { !$0.superview!.isHidden}
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        updateViewFromModel()
+    }
+    
     @IBAction private func touchCard(_ sender: UIButton) {
         flipCount += 1
-        if let cardNumber = cardButtons.index(of: sender) {
+        if let cardNumber = visibleCardButtons.index(of: sender) {
             game.chooseCard(at: cardNumber)
             updateViewFromModel()
         }
@@ -68,15 +84,15 @@ class ConcentrationViewController: VCLLoggingViewController {
     
     @IBAction private func newGame(_ sender: UIButton) {
         emojiChoices = emojiChoicesStore
-        game = Concentration(numberOfPairsOfCards: (cardButtons.count + 1) / 2)
+        game = Concentration(numberOfPairsOfCards: (visibleCardButtons.count + 1) / 2)
         updateViewFromModel()
         flipCount = 0
     }
     
     private func updateViewFromModel(){
-        if cardButtons != nil {
-            for index in cardButtons.indices {
-                let button = cardButtons[index]
+        if visibleCardButtons != nil {
+            for index in visibleCardButtons.indices {
+                let button = visibleCardButtons[index]
                 let card = game.cards[index]
                 
                 if card.isFaceUp {
